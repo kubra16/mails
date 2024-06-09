@@ -103,14 +103,14 @@ export default function Emails() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 py-8 px-4">
       <div className="flex items-center mb-4">
         <label htmlFor="numEmails" className="mr-2">
           Select Number of Emails to Classify:
         </label>
         <select
           id="numEmails"
-          className="bg-slate-600 rounded-md border border-gray-300 p-1"
+          className="bg-gray-300 rounded-md border border-gray-400 p-1"
           value={numEmailsToClassify}
           onChange={(e) => setNumEmailsToClassify(parseInt(e.target.value))}
         >
@@ -118,7 +118,10 @@ export default function Emails() {
           <option value={10}>10</option>
           <option value={20}>20</option>
         </select>
-        <button onClick={classifyEmails} className="btn ml-4">
+        <button
+          onClick={classifyEmails}
+          className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 ml-4 rounded"
+        >
           Classify Emails
         </button>
       </div>
@@ -127,15 +130,14 @@ export default function Emails() {
           {storedEmails.slice(0, numEmailsToClassify).map((email, index) => (
             <div
               key={index}
-              className="p-4 mx-2 border-2 border-rose-500 cursor-pointer"
+              className="p-4 border border-gray-400 cursor-pointer hover:border-blue-500 bg-white rounded-md"
               onClick={() => handleOpenModal(email)}
             >
-              <p>
+              <p className="text-gray-700">{email.from}</p>
+              <p className="text-gray-600">
                 <strong>Snippet:</strong> {email.snippet}
               </p>
-              <p>
-                <strong>Classification:</strong> {email.classification}
-              </p>
+              <p className="text-gray-600">{email.classification}</p>
             </div>
           ))}
         </div>

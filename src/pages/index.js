@@ -14,25 +14,33 @@ export default function Home() {
 
   if (session) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
-        <p>Signed in as {session.user.email}</p>
-        <button onClick={() => signOut()} className="btn">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+        <p className="text-lg mb-4">Signed in as {session.user.email}</p>
+        <button
+          onClick={() => signOut()}
+          className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
           Sign out
         </button>
-        <div>
+        <div className="mt-4">
           <input
             type="text"
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
-            placeholder="Enter OpenAI API Key"
-            className="input"
+            placeholder="Enter Gemini API"
+            className="input border border-gray-400 rounded px-4 py-2"
           />
-          <button onClick={saveApiKey} className="btn">
+          <button
+            onClick={saveApiKey}
+            className="btn bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ml-2"
+          >
             Save API Key
           </button>
         </div>
         <Link href="/emails">
-          <button className="btn">Go to Emails</button>
+          <button className="btn bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mt-4">
+            Go to Emails
+          </button>
         </Link>
       </div>
     );
@@ -40,8 +48,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
-      <p>Not signed in</p>
-      <button onClick={() => signIn("google")} className="btn">
+      <p className="text-lg mb-4">Not signed in</p>
+      <button
+        onClick={() => signIn("google")}
+        className="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
         Sign in with Google
       </button>
     </div>
