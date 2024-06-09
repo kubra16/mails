@@ -34,9 +34,7 @@ import OpenAI, { Configuration, OpenAIApi } from "openai";
 // }
 
 const axios = require("axios");
-
-// Function to delay execution
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -44,37 +42,20 @@ export default async function handler(req, res) {
   }
 
   const { emails, apiKey } = req.body;
-
+  const genAI = new GoogleGenerativeAI(apiKey);
   try {
     const classifiedEmails = [];
+
     for (const email of emails) {
-      // Send request for each email
-      const response = await axios.post(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          model: "gpt-3.5-turbo",
-          messages: [
-            {
-              role: "user",
-              content: `Snippet: ${email.snippet}\nSubject: ${email.subject}\nFrom: ${email.from}`,
-            },
-          ],
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-          },
-        }
-      );
+      const prompt = `Classify the following email into one of the categories: marketing, general, important, social, spam. Into one word Email: ${email.snippet} ${email.from} ${email.subject}`;
 
-      // Extract classification from response
-      const classification = response.data.choices[0].message;
+      const result = await genAI
+        .getGenerativeModel({ model: "gemini-1.5-flash" })
+        .generateContent(prompt);
+      const response = await result.response;
+      const classification = response.text();
 
-      // Add classified email to result
       classifiedEmails.push({ ...email, classification });
-
-      // Add a delay between requests (adjust as needed)
-      await delay(1000); // 1 second delay
     }
 
     res.status(200).json({ classifiedEmails });

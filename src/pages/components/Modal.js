@@ -1,33 +1,6 @@
 import React, { useEffect, useState } from "react";
 
 const Modal = ({ emailContent, selectedEmail, onClose, children }) => {
-  console.log(emailContent);
-  const [decodedPlainText, setDecodedPlainText] = useState(null);
-
-  useEffect(() => {
-    const decodePlainText = (encodedMessage) => {
-      console.log(encodedMessage, "msg");
-      try {
-        const decodedMessage = atob(encodedMessage);
-        console.log(decodedMessage, "hello");
-        return decodedMessage;
-      } catch (error) {
-        // console.error("Error decoding plain text message:", error);
-        return null;
-      }
-    };
-
-    const plainTextPart = emailContent?.payload.parts.find(
-      (part) => part.mimeType === "text/plain"
-    );
-    const decodedPlainText = plainTextPart
-      ? decodePlainText(plainTextPart.body.data)
-      : null;
-
-    setDecodedPlainText(decodedPlainText);
-  }, [emailContent]);
-  console.log(decodedPlainText);
-
   // if (!isOpen) return null;
 
   return (

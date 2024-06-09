@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import Modal from "./components/Modal";
-import { findHtmlPart } from "./utils/emailutils";
-import { classifyEmailsFromAPi } from "./api/classify";
 
 export default function Emails() {
   const { data: session } = useSession();
@@ -32,7 +30,6 @@ export default function Emails() {
           setEmails(emailsData);
           console.log(emailsData);
 
-          // Process and store emails in localStorage
           const processedEmails = emailsData.map((email) => {
             const headers = email.payload.headers;
             const fromHeader = headers.find((header) => header.name === "From");
@@ -51,14 +48,13 @@ export default function Emails() {
           });
 
           localStorage.setItem("emails", JSON.stringify(processedEmails));
-          setStoredEmails(processedEmails); // Set the processed emails to state
+          setStoredEmails(processedEmails);
         } catch (error) {
           console.error("Error fetching emails:", error);
         }
       };
       fetchEmails();
     } else {
-      // Fetch emails from localStorage if no session
       const storedEmails = JSON.parse(localStorage.getItem("emails")) || [];
       setStoredEmails(storedEmails);
     }
@@ -71,18 +67,26 @@ export default function Emails() {
     }
 
     try {
-      const emailsToClassify = storedEmails.slice(0, 1);
+      const emailsToClassify = storedEmails.slice(0, numEmailsToClassify);
       const response = await axios.post("/api/classify", {
         emails: emailsToClassify,
         apiKey: apiKey,
       });
-      console.log(emailsToClassify);
-      const responseClassifiedEmails = response.data.classifiedEmails;
-      localStorage.setItem(
-        "classifiedEmails",
-        JSON.stringify(responseClassifiedEmails)
-      );
-      setClassifiedEmails(responseClassifiedEmails);
+      const classifiedEmails = response.data.classifiedEmails;
+
+      // Update classifications only for the subset of emails classified
+      const updatedStoredEmails = storedEmails.map((email, index) => {
+        if (index < classifiedEmails.length) {
+          return {
+            ...email,
+            classification: classifiedEmails[index].classification,
+          };
+        }
+        return email;
+      });
+
+      localStorage.setItem("emails", JSON.stringify(updatedStoredEmails));
+      setStoredEmails(updatedStoredEmails);
     } catch (error) {
       console.error("Error classifying emails:", error);
     }
@@ -128,19 +132,25 @@ export default function Emails() {
           Classify Emails
         </button>
       </div>
-      {emails.length > 0 && ( // Check if emails array is not empty before rendering
+      {storedEmails.length > 0 && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {emails.slice(0, numEmailsToClassify).map((email, index) => (
+          {storedEmails.slice(0, numEmailsToClassify).map((email, index) => (
             <div
               key={index}
               className="p-4 mx-2 border-2 border-rose-500 cursor-pointer"
               onClick={() => handleOpenModal(email)}
             >
-              <p>{email.snippet}</p>
+              <p>
+                <strong>Snippet:</strong> {email.snippet}
+              </p>
+              <p>
+                <strong>Classification:</strong> {email.classification}
+              </p>
             </div>
           ))}
         </div>
       )}
+
       {selectedEmail && (
         <Modal
           emailContent={emailContent}
