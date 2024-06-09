@@ -29,8 +29,8 @@ This web application allows users to log in using Google OAuth, fetch their last
 4. Set these values as environment variables in a `.env.local` file:
 
    ```makefile
-   NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_client_id
-   NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=your_client_secret
+   GOOGLE_CLIENT_ID=your_client_id
+   GOOGLE_CLIENT_SECRET=your_client_secret
    NEXTAUTH_URL=http://localhost:3000
    NEXTAUTH_SECRET=Your_secret
    ```
