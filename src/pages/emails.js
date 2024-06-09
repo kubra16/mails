@@ -105,6 +105,8 @@ export default function Emails() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 py-8 px-4">
       <div className="flex items-center mb-4">
+        <p>Signed in as {session.user.email}</p>{" "}
+        {/* Displaying logged-in email */}
         <label htmlFor="numEmails" className="mr-2">
           Select Number of Emails to Classify:
         </label>
