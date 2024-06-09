@@ -7,7 +7,6 @@ export default function Emails() {
   const { data: session } = useSession();
   const [emails, setEmails] = useState([]);
   const [selectedEmail, setSelectedEmail] = useState(null);
-  const [classifiedEmails, setClassifiedEmails] = useState([]);
   const [emailContent, setEmailContent] = useState([]);
   const [numEmailsToClassify, setNumEmailsToClassify] = useState(5);
   const [storedEmails, setStoredEmails] = useState([]);
@@ -73,8 +72,6 @@ export default function Emails() {
         apiKey: apiKey,
       });
       const classifiedEmails = response.data.classifiedEmails;
-
-      // Update classifications only for the subset of emails classified
       const updatedStoredEmails = storedEmails.map((email, index) => {
         if (index < classifiedEmails.length) {
           return {
@@ -91,18 +88,11 @@ export default function Emails() {
       console.error("Error classifying emails:", error);
     }
   };
-
-  // Function to handle opening the modal and decoding email body content
   const handleOpenModal = (email) => {
-    let htmlContent = [];
-    // htmlContent = findHtmlPart(email?.payload?.parts);
-
-    console.log(htmlContent);
     setEmailContent(email);
     setSelectedEmail(email);
   };
 
-  // Function to close the modal
   const handleCloseModal = () => {
     setSelectedEmail(null);
     setEmailContent("");
@@ -120,7 +110,7 @@ export default function Emails() {
         </label>
         <select
           id="numEmails"
-          className="bg-white rounded-md border border-gray-300 p-1"
+          className="bg-slate-600 rounded-md border border-gray-300 p-1"
           value={numEmailsToClassify}
           onChange={(e) => setNumEmailsToClassify(parseInt(e.target.value))}
         >
